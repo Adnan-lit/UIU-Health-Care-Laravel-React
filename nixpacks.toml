@@ -186,3 +186,13 @@ autorestart=true
 stderr_logfile=/var/log/worker-inertia-ssr.log
 stdout_logfile=/var/log/worker-inertia-ssr.log
 '''
+
+"worker-reverb.conf" = '''
+[program:worker-reverb]
+process_name=%(program_name)s_%(process_num)02d
+command=php /app/artisan reverb:start
+autostart=true
+autorestart=true
+stdout_logfile=/var/log/worker-reverb.log
+stderr_logfile=/var/log/worker-reverb.log
+'''
