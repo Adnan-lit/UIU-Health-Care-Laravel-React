@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Add to your CSS or Tailwind setup */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: white;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 900px;
+}
+
+
+.glass-modal-container {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    max-width: 800px;
+    width: 100%;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-header,
+.modal-footer {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.modal-body {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    padding: 1rem;
+}
+
+.controls {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    z-index: 10;
+}
+
+.control-btn {
+    @apply p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.control-btn:disabled {
+    @apply opacity-50 cursor-not-allowed;
+}
+
+.image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.preview-image {
+    max-height: 50vh;
+    transition: transform 0.2s ease;
+}
+
+.action-btn {
+    @apply px-4 py-2 rounded-lg flex items-center gap-2 transition-colors duration-200;
+}
+
+.action-btn.share {
+    @apply bg-gray-100 hover:bg-gray-200 text-gray-700;
+}
+
+.action-btn.primary {
+    @apply bg-orange-500 hover:bg-orange-600 text-white;
+}
+
+/* PDF Modal specific styles */
+.react-pdf__Page {
+    margin: 1rem auto;
+    padding: 1rem;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.react-pdf__Page canvas {
+    max-width: 100%;
+    height: auto !important;
+}
