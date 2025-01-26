@@ -13,18 +13,23 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        $this->call([
+            DoctorSeeder::class,
+            AppointmentSeeder::class,
         ]);
 
-        User::factory()->create([
-            'name' => 'Doctor A',
-            'email' => 'dra@example.com',
-            'role' => 1,
-            'password' => bcrypt('12345678'),
-        ]);
+        // // User::factory(10)->create();
+
+        // User::factory()->create([
+        //     'name' => 'Test User',
+        //     'email' => 'test@example.com',
+        // ]);
+
+        // User::factory()->create([
+        //     'name' => 'Doctor A',
+        //     'email' => 'dra@example.com',
+        //     'role' => 1,
+        //     'password' => bcrypt('12345678'),
+        // ]);
     }
 }

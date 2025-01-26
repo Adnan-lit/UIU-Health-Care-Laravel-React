@@ -1,8 +1,20 @@
 import { useState } from "react";
 
 export default function PatientTabs({ health }) {
-    const [activeTab, setActiveTab] = useState("Health");
+    // Add null check and default value
+    const healthData = health && health[0]?.record_details 
+        ? JSON.parse(health[0].record_details)
+        : {
+            heartRate: 'N/A',
+            bloodPressure: 'N/A',
+            pulse: 'N/A',
+            oxygen: 'N/A',
+            bmi: 'N/A',
+            bloodGroup: 'N/A',
+            specialDiseases: 'N/A'
+        };
 
+    const [activeTab, setActiveTab] = useState("Health");
     const tabs = ["Health", "Medicine", "Test Records", "History"];
 
     return (
@@ -28,31 +40,31 @@ export default function PatientTabs({ health }) {
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <h4 className="font-medium">Heart Rate</h4>
-                            <p>{health.heartRate}</p>
+                            <p>{healthData.heartRate}</p>
                         </div>
                         <div>
                             <h4 className="font-medium">Blood Pressure</h4>
-                            <p>{health.bloodPressure}</p>
+                            <p>{healthData.bloodPressure}</p>
                         </div>
                         <div>
                             <h4 className="font-medium">Pulse</h4>
-                            <p>{health.pulse}</p>
+                            <p>{healthData.pulse}</p>
                         </div>
                         <div>
                             <h4 className="font-medium">Oxygen</h4>
-                            <p>{health.oxygen}</p>
+                            <p>{healthData.oxygen}</p>
                         </div>
                         <div>
                             <h4 className="font-medium">BMI</h4>
-                            <p>{health.bmi}</p>
+                            <p>{healthData.bmi}</p>
                         </div>
                         <div>
                             <h4 className="font-medium">Blood Group</h4>
-                            <p>{health.bloodGroup}</p>
+                            <p>{healthData.bloodGroup}</p>
                         </div>
                         <div>
                             <h4 className="font-medium">Special Diseases</h4>
-                            <p>{health.specialDiseases}</p>
+                            <p>{healthData.specialDiseases}</p>
                         </div>
                     </div>
                 )}
@@ -61,5 +73,5 @@ export default function PatientTabs({ health }) {
                 {activeTab === "History" && <p>History Information Coming Soon</p>}
             </div>
         </div>
-    )
+    );
 }

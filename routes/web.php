@@ -114,19 +114,18 @@ Route::middleware('auth')->group(function () {
 
 
 
-Route::middleware(['auth', 'verified', 'role:doctor'])
-    ->group(function () {
-        Route::redirect('/', '/doctor'); // Redirect root to /doctor
+// Route::middleware(['auth', 'verified', 'role:doctor'])
+//     ->group(function () {
+//         Route::redirect('/', '/doctor'); // Redirect root to /doctor
 
-        Route::prefix('doctor')->group(function () {
-            Route::get('/', [DoctorController::class, 'index'])->name('doctor.index');
-            Route::get('/patient', [DoctorController::class, 'patient'])->name('doctor.patient');
-            Route::get('/patient/{id}', [DoctorController::class, 'showPatient'])->name('doctor.patient.show');
+//         Route::prefix('doctor')->group(function () {
+//             Route::get('/', [DoctorController::class, 'index'])->name('doctor.index');
+//             Route::get('/patient', [DoctorController::class, 'patient'])->name('doctor.patient');
+//             Route::get('/patient/{id}', [DoctorController::class, 'showPatient'])->name('doctor.patient.show');
+//         });
+//     }
 
-        });
-    }
-
-);
+// );
 
 Route::fallback(function () {
      return Inertia::render('Error', ['status' => 404]);

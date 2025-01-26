@@ -4,6 +4,7 @@ import PatientDetails from "./PatientDetails";
 import PatientTabs from "./PatientTabs";
 
 export default function PatientManagement({ patients }) {
+    console.log("@patients", patients);
     // State for selected patient
     const [selectedPatient, setSelectedPatient] = useState(patients[0]);
 

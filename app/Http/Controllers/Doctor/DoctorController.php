@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Controllers\Doctor;
+use App\Models\Appointment;
+use App\Models\HealthRecord;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -9,6 +11,92 @@ use Inertia\Inertia;
 
 class DoctorController extends Controller
 {
+    public function index()
+    {
+        $doctorId = auth()->id();
+        
+        // Get total completed appointments
+        $completedAppointments = DB::table('appointments')
+            ->where('doc_id', $doctorId)
+            ->where('status', 'confirmed')
+            ->count();
+
+        // Get total completed consultations
+        $completedConsultations = DB::table('consultations')
+            ->where('doc_id', $doctorId)
+            ->where('status', 'completed')
+            ->count();
+
+        // Get total appointments for today
+        $todayAppointments = DB::table('appointments')
+            ->where('doc_id', $doctorId)
+            ->whereDate('date', now())
+            ->count();
+
+        // Get total patients
+        $totalPatients = DB::table('appointments')
+            ->where('doc_id', $doctorId)
+            ->distinct('user_id')
+            ->count('user_id');
+
+        // Calculate percentage changes (example: compared to last month)
+        $lastMonthAppointments = DB::table('appointments')
+            ->where('doc_id', $doctorId)
+            ->where('status', 'confirmed')
+            ->whereMonth('date', now()->subMonth())
+            ->count();
+
+        $appointmentGrowth = $lastMonthAppointments > 0 
+            ? round((($completedAppointments - $lastMonthAppointments) / $lastMonthAppointments) * 100)
+            : 0;
+            
+
+        $appointments = Appointment::with('user')
+            ->where('doc_id', auth()->user()->id)
+            ->get()
+            ->map(function($appointment) {
+                $appointment->user->health = HealthRecord::where('user_id', $appointment->user_id)->get();
+                return $appointment;
+            });
+
+        return Inertia::render('Doctor/Dashboard', [
+            'cardData' => [
+                [
+                    'name' => 'Total Patients',
+                    'icon' => 'fas fa-users',
+                    'color' => '#FFEDD5',
+                    'iconColor' => '#F97316',
+                    'value' => $totalPatients,
+                    'percentage' => $appointmentGrowth,
+                ],
+                [
+                    'name' => 'Appointments Completed',
+                    'icon' => 'fas fa-calendar-check',
+                    'color' => '#FEE2E2',
+                    'iconColor' => '#EF4444',
+                    'value' => $completedAppointments,
+                    'percentage' => $appointmentGrowth,
+                ],
+                [
+                    'name' => 'Today\'s Appointments',
+                    'icon' => 'fas fa-calendar-day',
+                    'color' => '#E0E7FF',
+                    'iconColor' => '#6366F1',
+                    'value' => $todayAppointments,
+                    'percentage' => null,
+                ],
+                [
+                    'name' => 'Consultations Done',
+                    'icon' => 'fas fa-video',
+                    'color' => '#D1FAE5',
+                    'iconColor' => '#10B981',
+                    'value' => $completedConsultations,
+                    'percentage' => null,
+                ],
+            ],
+            'appointments' => $appointments ?? [],
+        ]);
+    }
     //
     public function consultations()
     {

@@ -127,7 +127,7 @@ http {
     server {
         listen ${PORT};
         listen [::]:${PORT};
-        server_name localhost;
+        server_name uiuhealth.uiuss.tech;
 
         $if(NIXPACKS_PHP_ROOT_DIR) (
             root ${NIXPACKS_PHP_ROOT_DIR};

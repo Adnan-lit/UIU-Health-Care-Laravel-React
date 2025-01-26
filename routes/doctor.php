@@ -10,6 +10,8 @@ Route::group([
     'prefix'     => 'doctor',
     'middleware' => ['auth', 'verified','role:doctor'],
 ], function () {
+    Route::get('/', [DoctorController::class, 'index'])
+        ->name('doctor.index');
     Route::get('/patient', [DoctorController::class, 'patients'])
         ->name('doctor.patient');
     Route::get('/patient/{id}', [DoctorController::class, 'patientDetails'])
