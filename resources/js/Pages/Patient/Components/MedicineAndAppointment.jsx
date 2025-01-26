@@ -94,7 +94,7 @@ export default function MedicineAndAppointment({nextAppointment}) {
                 )}
                 {console.log(nextAppointment)}
 
-                {activeTab === "next-appointment" && (
+                {activeTab === "next-appointment" && nextAppointment && (
                     <div id="next-appointment" className="p-6">
                         <div
                             className="p-6 bg-gradient-to-r from-orange-100 to-white rounded-lg shadow-md flex flex-col sm:flex-row items-center">
@@ -159,6 +159,17 @@ export default function MedicineAndAppointment({nextAppointment}) {
                                 className="w-40 h-40 bg-cover bg-center rounded-lg ml-2 shadow-lg"
                                 style={{ backgroundImage: `url(${nextAppointment.profile_photo_path})` }}
                             ></div>
+                        </div>
+                    </div>
+                )}
+                {activeTab === "next-appointment" && !nextAppointment && (
+                    <div id="next-appointment" className="p-6">
+                        <div
+                            className="p-6 bg-gradient-to-r from-orange-100 to-white rounded-lg shadow-md flex flex-col sm:flex-row items-center">
+                            {/* Doctor's Details */}
+                            <div className="flex-1">
+                                <p className="text-sm font-medium text-gray-500 mb-2">No Upcoming Appointments</p>
+                            </div>
                         </div>
                     </div>
                 )}

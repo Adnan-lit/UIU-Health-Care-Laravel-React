@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from "react";
 import {Link, useForm} from "@inertiajs/react";
 import {usePage} from "@inertiajs/react";
+import Swal from 'sweetalert2'
 
 const Calendar = ({doctors, initialAppointments, previousAppointments}) => {
     const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -20,7 +21,7 @@ const Calendar = ({doctors, initialAppointments, previousAppointments}) => {
     const [appointments, setAppointments] = useState(
         initialAppointments.map(appt => ({
             ...appt,
-            date: new Date(appt.date)
+            date: new Date(new Date(appt.date).setHours(12, 0, 0, 0))  // Set to noon
         }))
     );
 
@@ -75,7 +76,7 @@ const Calendar = ({doctors, initialAppointments, previousAppointments}) => {
         newDate = newDate.toISOString().split('T')[0];
         newTime = newTime.split(':').slice(0, 2).join(':');
 
-        const newAppointmentDate = new Date(new Date(`${newDate} ${newTime}`).getTime() + 24 * 60 * 60 * 1000);
+        const newAppointmentDate = new Date(new Date(`${newDate} ${newTime}`).getTime());
 
         return appointments.some(appointment => {
             const existingAppointmentDate = new Date(`${appointment.date.toISOString().split('T')[0]} ${appointment.time.split(':').slice(0, 2).join(':')}`);
@@ -105,6 +106,13 @@ const Calendar = ({doctors, initialAppointments, previousAppointments}) => {
             setDoctorSearch('');
             setShowDoctorDropdown(false);
         }
+        else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'You cannot book an appointment for a past date!',
+            });
+        }
     }
 
     const handleDoctorSelect = (doctor) => {
@@ -116,31 +124,70 @@ const Calendar = ({doctors, initialAppointments, previousAppointments}) => {
         setShowDoctorDropdown(false);
     }
 
-    const handleAppointmentSubmit = (e) => {
-        e.preventDefault();
+    function submitAppointment() {
+        // Format the date correctly before submitting
+        const formattedDate = new Date(data.date);
+        formattedDate.setHours(12, 0, 0, 0);  // Set to noon to avoid timezone issues
 
-
-        // Submit form using Inertia
         post('/patient/appointments/create', {
+            ...data,
+            date: formattedDate.toISOString().split('T')[0],  // Format as YYYY-MM-DD
+        }, {
             preserveScroll: true,
-            onSuccess: () => {
-                // Add the new appointment to local state
-                const selectedDoctor = doctors.find(d => d.id === data.doc_id);
-                const date = new Date(data.date);
+            onSuccess: (response) => {
+                // Create new appointment with all required fields from the response
                 const newAppointment = {
-                    date: data.date,
+                    app_id: response.appointment.id,
+                    date: formattedDate,
                     time: data.time,
-                    doctor: selectedDoctor,
-                    problems: data.problems,
+                    name: doctors.find(d => d.doc_id === data.doc_id)?.name,
+                    specialty: doctors.find(d => d.doc_id === data.doc_id)?.specialty,
+                    problem: data.problems,
                     status: 'pending'
                 };
-                setAppointments([...appointments, newAppointment]);
+
+                // Update appointments state with the new appointment
+                setAppointments(prevAppointments => [...prevAppointments, newAppointment]);
 
                 // Close popup and reset form
                 setShowEventPopup(false);
                 reset();
+
+                // Show success message
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Appointment Booked!',
+                    text: 'Your appointment has been successfully scheduled.',
+                });
+            },
+            onError: (errors) => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Something went wrong! Please try again.',
+                });
             }
         });
+    }
+
+    const handleAppointmentSubmit = (e) => {
+        e.preventDefault();
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'Do you want to book an appointment with this doctor?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, book it!',
+            cancelButtonText: 'No, cancel!',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                submitAppointment();
+            }
+        })
+
+
 
     }
 
@@ -241,7 +288,11 @@ const Calendar = ({doctors, initialAppointments, previousAppointments}) => {
                                         const newTime = new Date(`${selectedDate.toISOString().split('T')[0]} ${data.time.split(':').slice(0, 2).join(':')}`);
                                         newTime.setMinutes(newTime.getMinutes() + 15);
                                         if (conflict) {
-                                            alert('Appointment time conflicts with another appointment. Please select another time');
+                                            Swal.fire({
+                                                icon: 'error',
+                                                title: 'Oops...',
+                                                text: 'There is a conflict with another appointment. Please select another time!',
+                                            });
                                             console.log(`${newTime.getHours()}:${newTime.getMinutes()}`);
                                             setData('time', `${newTime.getHours()}:${newTime.getMinutes()}`);
                                         }

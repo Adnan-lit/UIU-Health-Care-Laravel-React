@@ -10,8 +10,8 @@ export default function Error() {
     const isAuthorized = auth.user;
     return (
         <>
-     
-       {isAuthorized ? (
+
+       {isAuthorized && isAuthorized.role === 0 ? (
         <PatientLayout >
         <div className="flex-1 p-8">
         <div className="max-w-2xl mx-auto text-center mt-20">
@@ -63,9 +63,9 @@ export default function Error() {
                   </PrimaryButton>
                 </Link>
              </div>
-          </div>        
+          </div>
          </div>
-         )      
+         )
        }
        </>
     );
