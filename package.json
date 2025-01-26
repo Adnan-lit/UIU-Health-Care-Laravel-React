@@ -2,7 +2,7 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vite build",
+        "build": "vite",
         "dev": "vite",
         "project": "concurrently --kill-others \"php artisan serve --host=0.0.0.0 --port=8000\" \"npm run dev\" \"php artisan reverb:start\" \"php artisan queue:listen\"",
         "serve": "concurrently --kill-others \"php artisan serve --host=0.0.0.0 --port=8000\" \"npm run build\" \"serve -s build -p 5173\" \"php artisan reverb:start\" \"php artisan queue:listen\""
