@@ -10,12 +10,20 @@ export default defineConfig({
         }),
         react(),
     ],
+    resolve: {
+        alias: {
+            '@': '/resources/js',
+        }
+    },
     optimizeDeps: {
-        include: ['react-pdf', 'pdfjs-dist']
+        include: ['@inertiajs/core']
     },
     build: {
         commonjsOptions: {
-            include: [/react-pdf/, /pdfjs-dist/]
+            include: [/node_modules/],
+            transformMixedEsModules: true,
+            defaultIsModuleExports: true,
+            requireReturnsDefault: 'auto'
         }
     }
 });
