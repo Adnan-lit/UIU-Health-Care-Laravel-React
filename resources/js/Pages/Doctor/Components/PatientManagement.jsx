@@ -18,10 +18,16 @@ export default function PatientManagement({ patients }) {
             />
             
             {/* Pass selected patient details */}
-            <PatientDetails patient={selectedPatient} />
-            
-            {/* Pass selected patient health data */}
+            {selectedPatient && (
+                <PatientDetails patient={selectedPatient} />
+            )}
+
+            {/* Pass selected patient details */}
+            {selectedPatient && (
             <PatientTabs health={selectedPatient.health} />
+
+            )}
+            {/* Pass selected patient health data */}
         </div>
     )
 }

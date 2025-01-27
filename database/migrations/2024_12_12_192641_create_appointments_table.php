@@ -25,7 +25,7 @@ return new class extends Migration
             // Appointment Details
             $table->date('date');
             $table->time('time');
-            $table->enum('status', ['pending','paid', 'approved', 'rejected', 'completed'])->default('pending');
+            $table->enum('status', ['pending','paid', 'confirmed', 'cancelled', 'completed'])->default('pending');
             $table->string('problem')->nullable();
 
             // Additional Timestamp

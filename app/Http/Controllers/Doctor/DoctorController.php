@@ -14,7 +14,7 @@ class DoctorController extends Controller
     public function index()
     {
         $doctorId = auth()->id();
-        
+
         // Get total completed appointments
         $completedAppointments = DB::table('appointments')
             ->where('doc_id', $doctorId)
@@ -46,10 +46,10 @@ class DoctorController extends Controller
             ->whereMonth('date', now()->subMonth())
             ->count();
 
-        $appointmentGrowth = $lastMonthAppointments > 0 
+        $appointmentGrowth = $lastMonthAppointments > 0
             ? round((($completedAppointments - $lastMonthAppointments) / $lastMonthAppointments) * 100)
             : 0;
-            
+
 
         $appointments = Appointment::with('user')
             ->where('doc_id', auth()->user()->id)
@@ -96,6 +96,39 @@ class DoctorController extends Controller
             ],
             'appointments' => $appointments ?? [],
         ]);
+    }
+
+    public function messages()
+    {
+
+        $users = DB::table('users')
+            ->where('role', '0')
+            ->get();
+
+            $messageHistory = DB::table('messages')
+            ->join('users as sender', 'messages.sender_id', '=', 'sender.id')
+            ->join('users as receiver', 'messages.receiver_id', '=', 'receiver.id')
+            ->select('messages.*', 'sender.name as sender_name', 'receiver.name as receiver_name', 'sender.profile_photo_path as sender_photo', 'receiver.profile_photo_path as receiver_photo', 'sender.user_type as senderRole', 'receiver.user_type as receiverRole')
+            ->where('messages.sender_id', auth()->user()->id)
+            ->orWhere('messages.receiver_id', auth()->user()->id)
+            ->orderBy('messages.timestamp', 'asc') // Specify the table for created_at
+            ->get();
+            $blobSasUrl = env('BLOB_SAS_URL');
+
+        return Inertia::render('Doctor/Messages', ['users' => $users, 'messageHistory' => $messageHistory, 'blobSasUrl' => $blobSasUrl]);
+    }
+
+    public function appointments()
+    {
+        $appointments = DB::table('appointments')
+            ->join('users', 'appointments.user_id', '=', 'users.id')
+            ->select('appointments.*', 'users.name as patient_name', 'users.profile_photo_path as patient_photo', 'users.phone as patient_phone')
+            ->where('appointments.doc_id', auth()->id())
+            ->orderBy('appointments.updated_at', 'desc')
+            ->get();
+
+
+        return Inertia::render('Doctor/Appointments', ['appointments' => $appointments]);
     }
     //
     public function consultations()
@@ -237,5 +270,17 @@ class DoctorController extends Controller
         return Inertia::render('Doctor/ConsultationReport', [
             'consultation' => $consultation
         ]);
+    }
+
+    public function updateAppointmentStatus(Request $request)
+    {
+        $validate = $request->validate([
+            'app_id' => 'required',
+            'status' => 'required'
+        ]);
+        DB::table('appointments')   
+            ->where('app_id', $validate['app_id'])
+            ->update(['status' => $validate['status']]);
+        return response()->json(['message' => 'Appointment status updated successfully']);
     }
 }

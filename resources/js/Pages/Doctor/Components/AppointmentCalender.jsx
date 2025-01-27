@@ -2,11 +2,10 @@ import { Link } from "@inertiajs/react";
 
 export default function AppointmentCalendar({  appointments }) {
     return (
-        <div className="w-full rounded-lg bg-[#161616] text-white p-6">
+        <div className="w-full h-full rounded-lg bg-[#161616] text-white p-6">
     
 
             {/* Appointments Section */}
-            <div>
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-lg font-medium">Today's Appointments</h2>
                     <Link 
@@ -15,8 +14,8 @@ export default function AppointmentCalendar({  appointments }) {
                         View All
                     </Link>
                 </div>
-                <div className="space-y-4">
-                    {appointments.map((appointment, index) => (
+                <div className="space-y-4 h-full">
+                    {appointments.slice(0, 5).map((appointment, index) => (
                         <a href={`/doctor/patient/${appointment.user.id}`} className="block">
                         <div
                             key={index}
@@ -41,8 +40,12 @@ export default function AppointmentCalendar({  appointments }) {
                         </div>
                         </a>
                     ))}
+                    {appointments.length === 0 && (
+                        <div className="flex justify-center items-center h-full">
+                            <h3 className="text-lg font-medium">No appointments found</h3>
+                        </div>
+                    )}
                 </div>
             </div>
-        </div>
     );
 }
