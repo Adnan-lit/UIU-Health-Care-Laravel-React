@@ -20,7 +20,6 @@ class DoctorSeeder extends Seeder
             'email' => fake()->email(),
             'password' => bcrypt('12345678'),
             'role' => 1,
-            "user_type" => "doctor",
         ]);
 
         Doctor::create([

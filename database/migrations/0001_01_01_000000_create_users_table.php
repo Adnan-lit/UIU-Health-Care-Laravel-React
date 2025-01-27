@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('address')->nullable();
             $table->boolean('available_for_donation')->default(false);
             $table->string('emergency_contact')->nullable();
-            $table->enum('user_type',['student','faculty','staff','alumni','doctor','admin'])->default('student')->nullable();
+            $table->enum('user_type',['student','faculty','staff','alumni','doctor','admin', 'pharmacist'])->default('student')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

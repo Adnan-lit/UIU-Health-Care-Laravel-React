@@ -6,6 +6,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SslCommerzPaymentController;
 use App\Notifications\CallingNotification;
 use App\Http\Controllers\DoctorController;
+use App\Http\Controllers\PharmacyController;
 use App\Models\Doctor;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -66,9 +67,17 @@ Route::get('/bkash/refund/status', [App\Http\Controllers\BkashTokenizePaymentCon
 
 
 
-Route::get('/pharmacist', function () {
-    return Inertia::render('Pharmacist/Dashboard');
-})->middleware(['auth', 'verified','role:pharmacist'])->name('pharmacist');
+// Route::get('/pharmacist', function () {
+//     return Inertia::render('Pharmacist/Dashboard');
+// })->middleware(['auth', 'verified','role:pharmacist'])->name('pharmacist');
+
+Route::prefix('pharmacist')->middleware(['auth', 'verified','role:pharmacist'])->group(function () {
+    Route::get('/', [PharmacyController::class, 'index'])->name('pharmacist');
+    Route::get('/medicine', [PharmacyController::class, 'medicine'])->name('pharmacist.medicine');
+    Route::get('/medicine/{id}', [PharmacyController::class, 'showMedicine'])->name('pharmacist.medicine.show');
+    Route::post('/medicine/inventory/update', [PharmacyController::class, 'updateInventory'])->name('pharmacist.medicine.inventory.update');
+    
+});
 
 //Route::get('/patient', function () {
 //    return Inertia::render('Patient/Consultations');

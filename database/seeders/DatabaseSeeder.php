@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\InventoryMedicine;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -14,8 +15,8 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            DoctorSeeder::class,
-            AppointmentSeeder::class,
+            // DoctorSeeder::class,
+            // AppointmentSeeder::class,
         ]);
 
         // // User::factory(10)->create();
@@ -31,5 +32,8 @@ class DatabaseSeeder extends Seeder
         //     'role' => 1,
         //     'password' => bcrypt('12345678'),
         // ]);
+
+
+        InventoryMedicine::factory(10)->create();
     }
 }
