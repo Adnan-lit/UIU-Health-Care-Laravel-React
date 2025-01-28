@@ -11,7 +11,7 @@ class PharmacyController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Pharmacist/Dashboard');
+        return Inertia::render('Pharmacist/PharmacistDashboard');
     }
 
 
@@ -27,7 +27,7 @@ class PharmacyController extends Controller
             $medicineQuery->where('brand_name', 'like', '%' . request('brand_name') . '%');
         }
 
-        $allMedicines = $medicineQuery->paginate(10)->onEachSide(1);
+        $allMedicines = $medicineQuery->paginate(6)->onEachSide(1);
 
         $allGroupName = Medicine::query()
             ->select('generic_name') // Fetching generic_name
